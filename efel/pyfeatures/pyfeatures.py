@@ -35,6 +35,7 @@ from numpy.fft import *
 all_pyfeatures = [
     'voltage',
     'time',
+    'current',
     'ISIs',
     'initburst_sahp',
     'initburst_sahp_vb',
@@ -79,6 +80,11 @@ def impedance():
     else:
         return None 
 
+
+
+def current():
+    """Get current trace"""
+    return _get_cpp_feature("current")
 
 
 def ISIs():
