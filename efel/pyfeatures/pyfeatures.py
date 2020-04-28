@@ -35,7 +35,6 @@ from numpy.fft import *
 all_pyfeatures = [
     'voltage',
     'time',
-    'current',
     'ISIs',
     'initburst_sahp',
     'initburst_sahp_vb',
@@ -63,38 +62,28 @@ def time():
 def impedance():
     volta = _get_cpp_feature("voltage")
     volt_hold = numpy.median(volta[0:10])
-    volt = volta - volt_hold 
+    volt = volta - volt_hold
     curr = _get_cpp_feature("current")
     cur_hold = numpy.median(curr[0:10])
     cur = curr - cur_hold
     if max(volta) < 0:  # if there is no spikes in ZAP
         fft_volt = numpy.fft.fft(volt * 1e3)
         fft_cur = numpy.fft.fft(cur * 1e12)
-        freq = numpy.fft.fftfreq(len(volt), d = 0.0001)
+        freq = numpy.fft.fftfreq(len(volt), d=0.0001)
         Z = ((fft_volt) / (fft_cur))
-        signalPhase = numpy.angle(fft_volt)   
+        signalPhase = numpy.angle(fft_volt) 
         norm_Z = abs(Z[1:150]) / max(abs(Z[1:150]))
         smooth_Z = gaussian_filter1d(norm_Z, 10)
         ind_max = numpy.argmax(smooth_Z)
         return(freq[ind_max])
     else:
-        return None 
+        return None
 
 
-<<<<<<< HEAD
-=======
-
-def current():
-    """Get current trace"""
-    return _get_cpp_feature("current")
-
-
->>>>>>> dac6d1a40025381df486c00414e1a9694a3fa8bb
 def ISIs():
     """Get all ISIs"""
 
     peak_times = _get_cpp_feature("peak_time")
-
     return numpy.diff(peak_times)
 
 
