@@ -71,7 +71,7 @@ def impedance():
         fft_cur = numpy.fft.fft(cur * 1e12)
         freq = numpy.fft.fftfreq(len(volt), d=0.0001)
         Z = ((fft_volt) / (fft_cur))
-        signalPhase = numpy.angle(fft_volt) 
+        signalPhase = numpy.angle(fft_volt)
         norm_Z = abs(Z[1:150]) / max(abs(Z[1:150]))
         smooth_Z = gaussian_filter1d(norm_Z, 10)
         ind_max = numpy.argmax(smooth_Z)
