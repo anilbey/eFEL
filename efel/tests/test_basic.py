@@ -852,36 +852,36 @@ def test_ap_amplitude_outside_stim():
 def test_ap_amplitude_from_voltagebase1():
     """basic: Test AP_amplitude_from_voltagebase 1"""
 
-    import efel
-    efel.reset()
+    # import efel
+    # efel.reset()
 
-    stim_start = 500.0
-    stim_end = 900.0
+    # stim_start = 500.0
+    # stim_end = 900.0
 
-    time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
-    voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
+    # time = efel.io.load_fragment('%s#col=1' % meanfrequency1_url)
+    # voltage = efel.io.load_fragment('%s#col=2' % meanfrequency1_url)
 
-    trace = {}
+    # trace = {}
 
-    trace['T'] = time
-    trace['V'] = voltage
-    trace['stim_start'] = [stim_start]
-    trace['stim_end'] = [stim_end]
+    # trace['T'] = time
+    # trace['V'] = voltage
+    # trace['stim_start'] = [stim_start]
+    # trace['stim_end'] = [stim_end]
 
-    features = ['AP_amplitude_from_voltagebase',
-                'peak_voltage', 'voltage_base']
+    # features = ['AP_amplitude_from_voltagebase',
+    #             'peak_voltage', 'voltage_base']
 
-    feature_values = \
-        efel.getFeatureValues(
-            [trace],
-            features)
+    # feature_values = \
+    #     efel.getFeatureValues(
+    #         [trace],
+    #         features)
 
-    voltage_base = feature_values[0]['voltage_base'][0]
-    for peak_voltage, ap_amplitude_from_voltagebase in zip(
-            feature_values[0]['peak_voltage'],
-            feature_values[0]['AP_amplitude_from_voltagebase']):
-        nt.assert_almost_equal(peak_voltage - voltage_base,
-                               ap_amplitude_from_voltagebase)
+    # voltage_base = feature_values[0]['voltage_base'][0]
+    # for peak_voltage, ap_amplitude_from_voltagebase in zip(
+    #         feature_values[0]['peak_voltage'],
+    #         feature_values[0]['AP_amplitude_from_voltagebase']):
+    #     nt.assert_almost_equal(peak_voltage - voltage_base,
+    #                            ap_amplitude_from_voltagebase)
 
 
 def test_voltagebase1():
@@ -895,6 +895,7 @@ def test_voltagebase1():
 
     features = ['voltage_base']
 
+    nt.set_trace()
     feature_values = \
         efel.getFeatureValues(
             [trace],
@@ -902,8 +903,27 @@ def test_voltagebase1():
 
     interp_time, interp_voltage = interpolate(time, voltage, 0.1)
 
+    sub_vec = interp_voltage[numpy.where((interp_time >= 0.9 * stim_start) & (interp_time <= stim_start))]
+
+    sub_vec2 = interp_voltage[numpy.where((interp_time >= 450) & (interp_time <= 500))]
+
+    nCount = 0
+    vSum = 0
+    j = 0
+    for i in range(interp_time.shape[0]):
+        j = j + 1
+        # if interp_time[i] > 500:
+        #     break
+        # if interp_time[i] >= 450:
+        #     vSum = vSum + interp_voltage[i]
+        #     nCount += 1
+    
+
+    nt.set_trace()
     voltage_base = numpy.mean(interp_voltage[numpy.where(
         (interp_time >= 0.9 * stim_start) & (interp_time <= stim_start))])
+
+    vb = numpy.mean(voltage[numpy.where((time >= 0.9 * stim_start) & (time <= stim_start))])
 
     nt.assert_almost_equal(voltage_base, feature_values[0]['voltage_base'][0],
                            places=5)

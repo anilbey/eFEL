@@ -25,6 +25,9 @@
 #include <deque>
 #include <functional>
 #include <iterator>
+#include <string>
+#include <iomanip>
+#include <sstream>
 
 // slope of loglog of ISI curve
 static int __ISI_log_slope(const vector<double>& isiValues,
@@ -2250,8 +2253,12 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
     vb_end_perc = 1.0;
   }
 
+  std::stringstream stream;
+
   startTime = stimStart[0] * vb_start_perc;
   endTime = stimStart[0] * vb_end_perc;
+
+  endTime = 500.0;
 
   if (startTime >= endTime) {
     GErrorStr += "\nvoltage_base: startTime >= endTime\n";
@@ -2260,15 +2267,50 @@ int LibV5::voltage_base(mapStr2intVec& IntFeatureData,
 
   int nCount = 0;
   double vSum = 0;
+  int jCount = 0;
   // calculte the mean of voltage between startTime and endTime
   for (size_t i = 0; i < t.size(); i++) {
-    if (t[i] > endTime) break;
+    jCount = jCount + 1;
+    if (t[i] > endTime) 
+    {
+      GErrorStr += "\n break case!!!";
+      GErrorStr += "\n i: " + std::to_string(i);
+      
+      stream << std::fixed << std::setprecision(17) << t[i];
+      std::string ti_str = stream.str();
+      GErrorStr += "\n t[i]: " + ti_str;
+
+      stream.str("");
+      stream.clear();
+
+      stream << std::fixed << std::setprecision(17) << endTime;
+      GErrorStr += "\n endTime: " + stream.str();
+      GErrorStr += "\n t[i] > endTime: " + std::to_string(t[i] > endTime);
+
+      stream.str("");
+      stream.clear();
+
+      stream << std::fixed << std::setprecision(17) << t[i] - endTime;
+      GErrorStr += "\n t[i] - endTime: " + stream.str();
+      break;
+    }
+    
 
     if (t[i] >= startTime) {
       vSum = vSum + v[i];
       nCount++;
     }
   }
+
+  GErrorStr += "\n jcount\n" + std::to_string(jCount);
+  GErrorStr += "\n startTime\n" + std::to_string(startTime);
+  GErrorStr += "\n endTime\n" + std::to_string(endTime);
+  
+  GErrorStr += "\n t size\n" + std::to_string(t.size());
+  GErrorStr += "\n v size\n" + std::to_string(v.size());
+  GErrorStr += "\n vSum\n" + std::to_string(vSum);
+  GErrorStr += "\n nCount\n" + std::to_string(nCount);
+  return -1;
 
   if (nCount == 0) {
     GErrorStr +=
